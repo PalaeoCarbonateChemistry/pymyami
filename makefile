@@ -7,10 +7,10 @@ genapprox:
 	python pymyami/parameters/gen_approx_coefs.py
 
 build:
-	python setup.py sdist bdist_wheel
+	python -m build
 
 upload:
-	twine upload dist/pymyami-$$(python setup.py --version)*
+	twine upload dist/*
 
 distribute:
 	make test
