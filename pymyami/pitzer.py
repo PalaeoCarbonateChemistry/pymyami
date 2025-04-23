@@ -399,7 +399,7 @@ def calc_gamma_alpha(TK, Sal, Istr, m_cation, m_anion,
     Phi_MgOH = 0.028  # from Table A11 MgOH-Mg-OH interaction parameter
     ln_gamma_MgOH = (
         1 * (f_gamma + mR) + 1 * mS +
-        2 * m_anion[1] * (BMX[*ii] + E_cat * CMX[*ii]) +  # interaction between MgOH-Cl affects MgOH gamma
+        2 * m_anion[1] * (BMX[ii[0], ii[1]] + E_cat * CMX[ii[0], ii[1]]) +  # interaction between MgOH-Cl affects MgOH gamma
         m_cation[3] * m_anion[1] * Phi_MgOH  # interaction between MgOH-Mg-OH affects MgOH gamma
     )
     gamma_MgOH = np.exp(ln_gamma_MgOH)
