@@ -85,8 +85,8 @@ N_ANION = len(ANION_IND)  # OH-=0; Cl-=1; B(OH)4-=2; HCO3-=3; HSO4-=4; CO3-=5; S
 # build a regex for pulling ions out of salt names
 recations = '|'.join(CATION_IND.keys())
 reanions = '|'.join(ANION_IND.keys())
-reanions = reanions.replace('(', '\(').replace(')', '\)')  # escape brackets
-sm = re.compile('^(' + recations + ')[0-9]?\(?(' + reanions + ')\)?[0-9]?$')
+reanions = reanions.replace('(', r'\(').replace(')', r'\)')  # escape brackets
+sm = re.compile(r'^(' + recations + r')[0-9]?\(?(' + reanions + r')\)?[0-9]?$')
 
 def break_salt(s):
     """
