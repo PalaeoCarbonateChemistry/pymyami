@@ -9,20 +9,20 @@ TEST_TOLERANCE = 5  # maximum % difference from original
 
 class MyAMI_V1_crosscheck(unittest.TestCase):
 
-    def test_Fcorr(self):
-        checkfile = os.path.join(os.path.dirname(__file__), 'data/MyAMI_V1_Fcorr_checkvals.csv')
+    def test_seawater_correction(self):
+        checkfile = os.path.join(os.path.dirname(__file__), 'data/MyAMI_V1_seawatercorrection_checkvals.csv')
         print(checkfile)
         check = pd.read_csv(checkfile, index_col=0)
         check.columns = ['T', 'S', 'Ca', 'Mg', 'KspC', 'K1', 'K2', 'KW', 'KB', 'KspA', 'K0', 'KS']
 
-        new_Fcorr = pymyami.calculate_seawater_correction(Sal=check.S.values, TempC=check['T'].values, Ca=check.Ca.values, Mg=check.Mg.values)
+        new_seawater_correction = pymyami.calculate_seawater_correction(Sal=check.S.values, TempC=check['T'].values, Ca=check.Ca.values, Mg=check.Mg.values)
 
         Ks = 'K0', 'K1', 'K2', 'KW', 'KB', 'KspA', 'KspC', 'KS'
 
-        print(f'Comparing Fcorr to MyAMI_V1 (must be <{TEST_TOLERANCE:.1f}% max difference)')
+        print(f'Comparing seawater correction to MyAMI_V1 (must be <{TEST_TOLERANCE:.1f}% max difference)')
         for k in Ks:
             v1 = check[k]
-            new = new_Fcorr[k]
+            new = new_seawater_correction[k]
 
             rdiff = (v1 - new) / v1  # relative difference
             

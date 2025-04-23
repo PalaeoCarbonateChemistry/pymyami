@@ -26,8 +26,8 @@ def calculate_seawater_correction(Sal=35., TempC=25., Na=None, K=None, Mg=None, 
     Returns
     -------
     dict 
-        Correction factors (Fcorr) to be applied to empirical K values,
-        where K_corr = K_cond * F_corr.
+        Correction factors (seawater_correction) to be applied to empirical K values,
+        where K_corr = K_cond * seawater_correction.
     """
 
     # ensure all inputs are the same shape
