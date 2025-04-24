@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pymyami"
+dynamic = ["version"]
+authors = [
+    { name = "Oscar Branson", email = "ob266@cam.ac.uk" },
+]
+maintainers = [
+    { name = "Ross Whiteford", email = "Ross.Whiteford@rhul.ac.uk" }
+]
+description = "MyAMI specific ion interaction model for calculating stoichiometric equilibrium constants in modified seawater."
+readme = { file = "README.md", content-type = "text/markdown" }
+requires-python = ">=3.9"
+license = { text = "MIT" }
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+dependencies = [
+    "numpy",
+    "pandas",
+    "matplotlib",
+    "scikit-learn",
+    "scipy",
+]
+
+[project.urls]
+Homepage = "https://github.com/PalaeoCarbonateChemistry/pymyami"
+PalaeoCarbonateChemistry = "https://github.com/PalaeoCarbonateChemistry"
+
+[tool.setuptools]
+packages = ["pymyami"]
+zip-safe = true
+include-package-data = true
+
+[tool.setuptools.package-data]
+pymyami = ["parameters/*.json", "parameters/*.csv", "parameters/*.py"]
+
+[tool.setuptools.dynamic]
+version = { attr = "pymyami.VERSION" }

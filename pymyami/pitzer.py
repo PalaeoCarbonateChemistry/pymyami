@@ -1,6 +1,6 @@
 import numpy as np
 from .helpers import expand_dims, match_dims, standard_seawater, calc_Istr, calc_KF, calc_KS
-from .params import TABLES, calc_lambda_zeta, calc_seawater_ions, get_ion_index, CATION_CHG, ANION_CHG, ION_IND, N_CATION, N_ANION
+from .params import TABLES, calc_lambda_zeta, calc_seawater_ions, get_ion_index, calc_ionpair_association, CATION_CHG, ANION_CHG, ION_IND, N_CATION, N_ANION
 
 # TODO: new file for user-facing functions.
 
@@ -15,13 +15,15 @@ def calc_gKs(TC, Sal, Na=None, K=None, Ca=None, Mg=None, Sr=None, Cl=None, BOH4=
         Temperature in Celcius
     Sal : array-like
         Salinity
-    Na, K, Ca, Mg, Sr, Cl, BOH4, HCO3, CO3, SO4 : array-like, optional
+    Na, K, Ca, Mg, Sr, Cl, BOH4, HCO3, CO3, SO4 : array-like
         Average concentration of ions in seawater in mol kg-1, by default None
-    beta_0, beta_1, beta_2, C_phi : numpy.NDarray, optional
+        If none, values are calculated from salinity using seawater composition of
+        Millero et al., 2008.
+    beta_0, beta_1, beta_2, C_phi : numpy.NDarray
         Matrices of ion interaction coefficients from tables A1-A9 of
         Millero and Pierrot (1998; doi:10.1023/A:1009656023546) provided
         by the params.PitzerParams function.
-    Theta_negative, Theta_positive, Phi_NNP, Phi_PPN : numpy.NDarray, optional
+    Theta_negative, Theta_positive, Phi_NNP, Phi_PPN : numpy.NDarray
         Matrices of ion interaction coefficients from tables A10 and A11 of
         Millero and Pierrot (1998; doi:10.1023/A:1009656023546) provided
         by the params.PitzerParams function.
@@ -205,7 +207,7 @@ def calc_gamma_alpha(TK, Sal, Istr, m_cation, m_anion,
 
     # E_cat = sum(m_cation * Z_cation)
     E_an = -sum(m_anion * Z_anion)
-    E_cat = -E_an
+    E_cat = -E_an  # this enforces charge balance.
 
     # Calculate second and third virial coefficients
     
@@ -243,6 +245,11 @@ def calc_gamma_alpha(TK, Sal, Istr, m_cation, m_anion,
         beta_2 * 2 / (alpha_2**2 * Istr) * (1 - (1 + alpha_2 * sqrtI) * np.exp(-alpha_2 * sqrtI))
         )  # Eq. A12 and A16
     
+    # Note: the equations in the paper just show constants calculated from fixed values of alpha_1
+    # and alpha_2.
+    # The calculations here are equivalent to the paper, but write out the full pitzer equations for
+    # using alpha_1 and alpha_2. 
+    
     BMX_apostroph = (
         beta_1 * 2 / (alpha_1**2 * Istr**2) * (-1 + (1 + alpha_1 * sqrtI + alpha_1**2 * Istr / 2) * np.exp(-alpha_1 * sqrtI)) + 
         beta_2 * 2 / (alpha_2**2 * Istr   ) * (-1 - (1 + alpha_2 * sqrtI + alpha_2**2 * Istr / 2) * np.exp(-alpha_2 * sqrtI))
@@ -264,10 +271,10 @@ def calc_gamma_alpha(TK, Sal, Istr, m_cation, m_anion,
     # BMX_apostroph = (beta_1 / (2 * Istr**2)) * (-1 + (1 + (2 * sqrtI) + (2 * sqrtI)) * np.exp(-2 * sqrtI))  # Eq. A13
     # CMX = C_phi / (2 * np.sqrt(-np.expand_dims(Z_anion, 0) * np.expand_dims(Z_cation, 1)))  # Eq. A14
 
-    # H-SO4
-    # TODO: unclear how this comes from Clegg et al, 1994...
-    # This does nothing because beta params for for H-SO4 are all zeros -
-    # they're commented out in TabA9 because they were not used in MyAMI.
+    # # H-SO4
+    # # TODO: unclear how this comes from Clegg et al, 1994...
+    # # This does nothing because beta params for for H-SO4 are all zeros -
+    # # they're commented out in TabA9 because they were not used in MyAMI.
     # cat, an = get_ion_index('H-SO4')
     # # BMX* is calculated with T-dependent alpha for H-SO4; see Clegg et al.,
     # # 1994 --- Millero and Pierrot are completly off for this ion pair
@@ -376,38 +383,38 @@ def calc_gamma_alpha(TK, Sal, Istr, m_cation, m_anion,
     # thus, conversion is required
     K_HSO4_conditional = calc_KS(TK=TK, Sal=Sal, Istr=Istr)
     K_HF_conditional = calc_KF(TK=TK, Sal=Sal)
-    TF = 0.0000683  # TODO: estimate from Sal?
+    TF = 0.0000683 * Sal / 35
     TS = m_anion[6]
     
     alpha_Hsws = 1 / (1 + TS / K_HSO4_conditional + TF / K_HF_conditional)
     alpha_Ht = 1 / (1 + TS / K_HSO4_conditional)
 
-    # TODO: Unclear where this next section about gamma_MgCO3 has come from - talk to Mathis!
     # A number of ion pairs are calculated explicitly: MgOH, CaCO3, MgCO3, SrCO3
-    # since OH and CO3 are rare compared to the anions the anion alpha (free /
+    # since OH and CO3 are rare compared to the cations the anion alpha (free /
     # total) are assumed to be unity
     gamma_MgCO3 = gamma_CaCO3 = gamma_SrCO3 = 1
 
-    b0b1CPhi_MgOH = np.array([-0.1, 1.658, 0, 0.028])  # TODO This combines parameters from A8 (first 3) and A11 (last), but not clear how they are used
-    BMX_MgOH = b0b1CPhi_MgOH[0] + (b0b1CPhi_MgOH[1] / (2 * Istr)) * (1 - (1 + 2 * sqrtI) * np.exp(-2 * sqrtI))
+    ii = get_ion_index('Mg-OH')
+    # TODO: can't see a clean way to get around hard-coding this parameter, as it isn't imported in the Phi_NNP array... why?
+    Phi_MgOH = 0.028  # from Table A11 MgOH-Mg-OH interaction parameter
     ln_gamma_MgOH = (
         1 * (f_gamma + mR) + 1 * mS +
-        2 * m_anion[1] * (BMX_MgOH + E_cat * b0b1CPhi_MgOH[2]) +  # interaction between MgOH-Cl affects MgOH gamma
-        m_cation[3] * m_anion[1] * b0b1CPhi_MgOH[3]  # interaction between MgOH-Mg-OH affects MgOH gamma
-        )
+        2 * m_anion[1] * (BMX[ii[0], ii[1]] + E_cat * CMX[ii[0], ii[1]]) +  # interaction between MgOH-Cl affects MgOH gamma
+        m_cation[3] * m_anion[1] * Phi_MgOH  # interaction between MgOH-Mg-OH affects MgOH gamma
+    )
     gamma_MgOH = np.exp(ln_gamma_MgOH)
     
-    # TODO: where do all these parameters come from - Table II? Calculating empirical Ks?
-    K_MgOH = np.power(10, -(3.87 - 501.6 / TK)) / (gamma_cation[3] * gamma_anion[0] / gamma_MgOH)
-    K_MgCO3 = np.power(10, -(1.028 + 0.0066154 * TK)) / (gamma_cation[3] * gamma_anion[5] / gamma_MgCO3)
-    K_CaCO3 = np.power(10, -(1.178 + 0.0066154 * TK)) / (gamma_cation[4] * gamma_anion[5] / gamma_CaCO3)
-    # K_CaCO3 = np.power(10, (-1228.732 - 0.299444 * T + 35512.75 / T +485.818 * np.log10(T))) / (gamma_cation[4] * gamma_anion[5] / gamma_CaCO3) # Plummer and Busenberg82
-    # K_MgCO3 = np.power(10, (-1228.732 +(0.15) - 0.299444 * T + 35512.75 / T
-    # +485.818 * np.log10(T))) / (gamma_cation[4] * gamma_anion[5] /
-    # gamma_CaCO3)# Plummer and Busenberg82
-    K_SrCO3 = np.power(10, -(1.028 + 0.0066154 * TK)) / (gamma_cation[5] * gamma_anion[5] / gamma_SrCO3)
-
+    # Correct OH and CO3 gammas for ion pairing - section 7 & 8 and Table II of Millero and Pierrot (1998)
+    Kion = calc_ionpair_association(TK)
+    
+    K_MgOH = Kion['MgOH+'] / (gamma_cation[3] * gamma_anion[0] / gamma_MgOH)
+    
     alpha_OH = 1 / (1 + (m_cation[3] / K_MgOH))
+    
+    K_MgCO3 = Kion['MgCO3'] / (gamma_cation[3] * gamma_anion[5] / gamma_MgCO3)
+    K_CaCO3 = Kion['CaCO3'] / (gamma_cation[4] * gamma_anion[5] / gamma_CaCO3)
+    K_SrCO3 = Kion['SrCO3'] / (gamma_cation[5] * gamma_anion[5] / gamma_SrCO3)
+
     alpha_CO3 = 1 / (1 + (m_cation[3] / K_MgCO3) + (m_cation[4] / K_CaCO3) + (m_cation[5] / K_SrCO3))
 
     return ({'cation': gamma_cation, 'anion': gamma_anion}, 

@@ -21,7 +21,7 @@ class TestApproximation(unittest.TestCase):
         Ca = np.random.uniform(low=0, high=0.06, size=N)
 
         print(f'\n\nChecking approximation function (max relative difference <{TOLERANCE}%)...\n')
-        # calculate Fcorr using each method
+        # calculate seawater correction using each method
         direct = calculate_seawater_correction(TempC=TempC, Sal=Sal, Mg=Mg, Ca=Ca)
         approx = approximate_seawater_correction(TempC=TempC, Sal=Sal, Mg=Mg, Ca=Ca)
 

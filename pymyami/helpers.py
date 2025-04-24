@@ -4,10 +4,10 @@ Helper functions used throughout MyAMI.
 import json
 import numpy as np
 import pandas as pd
-import pkg_resources as pkgrs
+import importlib.resources as importlib_resources
 
 def MyAMI_parameter_file(fname=''):
-    return pkgrs.resource_filename('pymyami', f'parameters/{fname}')
+    return importlib_resources.files('pymyami') / f'parameters/{fname}'
 
 def expand_dims(orig, target):
     """

@@ -85,8 +85,8 @@ N_ANION = len(ANION_IND)  # OH-=0; Cl-=1; B(OH)4-=2; HCO3-=3; HSO4-=4; CO3-=5; S
 # build a regex for pulling ions out of salt names
 recations = '|'.join(CATION_IND.keys())
 reanions = '|'.join(ANION_IND.keys())
-reanions = reanions.replace('(', '\(').replace(')', '\)')  # escape brackets
-sm = re.compile('^(' + recations + ')[0-9]?\(?(' + reanions + ')\)?[0-9]?$')
+reanions = reanions.replace('(', r'\(').replace(')', r'\)')  # escape brackets
+sm = re.compile(r'^(' + recations + r')[0-9]?\(?(' + reanions + r')\)?[0-9]?$')
 
 def break_salt(s):
     """
@@ -120,7 +120,7 @@ def get_ion_index(ions):
 
 # Load Parameter Tables for calculating pitzer parameters
 TABLES = {}
-fs = glob(MyAMI_parameter_file('Tab*.csv'))
+fs = glob(str(MyAMI_parameter_file('Tab*.csv')))
 for f in fs:
     fname = os.path.split(f)[-1].replace('.csv', '')
     TABLES[fname] = pd.read_csv(f, comment='#')
@@ -256,7 +256,7 @@ def EqA10(a, TK):
     return a[0] + a[1] / TK + a[2] * 1e-4 * TK + a[3] * 1e-4 * TKsub + a[4] * 1e-6 * TKsub**2
 
 # lambda and zeta function
-def Eqn_A12(p, TK):
+def EqA12(p, TK):
     a, b, c, d, e = p
     return a + b * TK + c * TK**2 + d / TK + e * np.log(TK)
 
@@ -367,7 +367,7 @@ def calc_Theta_Phi(TK):
         ions = row.Pair.split('-')
         index = get_ion_index(row.Pair)
         
-        a = row[pnames]  # identify parameters
+        a = row[pnames].values  # identify parameters
         val = EqA10(a, TK)  # calculate value
         
         # assign value
@@ -443,7 +443,7 @@ def calc_lambda_zeta(TK):
     for i, ion in enumerate(ions):
         p = TabA12.loc[(TabA12.Parameter == 'lambda_CO2') & (TabA12.i == ion), ['a', 'b', 'c', 'd', 'e']]
         if p.size > 0:
-            lambdaCO2[i] = Eqn_A12(p.values[0], TK)
+            lambdaCO2[i] = EqA12(p.values[0], TK)
             
     zetaCO2 = np.zeros([2, 5, *TK.shape])
 
@@ -451,20 +451,20 @@ def calc_lambda_zeta(TK):
         for j, anion in enumerate(anions):
             p = TabA12.loc[(TabA12.Parameter == 'zeta_CO2') & (TabA12.i == cation) & (TabA12.j == anion), ['a', 'b', 'c', 'd', 'e']]
             if p.size > 0:
-                zetaCO2[j, i] = Eqn_A12(p.values[0], TK)
+                zetaCO2[j, i] = EqA12(p.values[0], TK)
 
     lambdaB = np.zeros((7))
     for i, ion in enumerate(ions):
         p = TabA12.loc[(TabA12.Parameter == 'lambda_BOH3') & (TabA12.i == ion), ['a']]
         if p.size > 0:
-            lambdaB[i] = p.values
+            lambdaB[i] = p.values.item()
             
     zetaB = np.zeros([2, 5])
     for i, cation in enumerate(cations):
         for j, anion in enumerate(anions):
             p = TabA12.loc[(TabA12.Parameter == 'zeta_BOH3') & (TabA12.i == cation) & (TabA12.j == anion), ['a']]
             if p.size > 0:
-                zetaB[j, i] = p.values
+                zetaB[j, i] = p.values.item()
     
     return {
         'lambdaCO2': lambdaCO2,
@@ -496,3 +496,28 @@ def PitzerParams(TK):
     # out.update(calc_lambda_zeta(TK))
 
     return out
+
+# Functions for calculating ion pair association constants
+def Eq24(p, TK):
+    """Equation 24 from Millero and Pierrot (1998)
+
+    Parameters
+    ----------
+    p : tuple
+        Containing paramters A, B, C given in Table II of Millero and Pierrot (1998)
+    TK : array-like
+        Temperature in Kelvin
+
+    Returns
+    -------
+    dict
+        Containing association constants for all the listed ion pairs at the given temperatures.
+    """
+    a, b, c = p
+    return 10**-(a + b / TK + c * TK)
+
+def calc_ionpair_association(TK):
+    params = TABLES['Tab2']
+    
+    return {k: Eq24(params.loc[params.IonPair == k, ['A', 'B', 'C']].values.flatten(), TK) for k in params.IonPair}
+    
