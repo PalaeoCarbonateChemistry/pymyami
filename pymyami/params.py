@@ -125,6 +125,7 @@ for f in fs:
     fname = os.path.split(f)[-1].replace('.csv', '')
     df = pd.read_csv(f, comment='#')
     for col in df.columns:
+        # fill missing values in numeric columns with 0
         converted = pd.to_numeric(df[col], errors='coerce')
         if not converted.isna().all():
             df[col] = converted.fillna(0)
