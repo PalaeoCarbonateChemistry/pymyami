@@ -3,7 +3,9 @@
 <a href="https://pypi.org/project/pymyami"><img src="https://badge.fury.io/py/pymyami.svg" height=18></a>
 </div>
 
-# MyAMI
+<img src="https://github.com/PalaeoCarbonateChemistry/pymyami/blob/dev/logo/pymyami.png?raw=true">
+
+
 The MyAMI Specific Ion Interaction Model for correcting stoichiometric equilibrium constants (*Ks*) for variations in seawater composition, made available available as the `pymyami` python package.
 
 This package is a re-factor of the MyAMI model published by [Hain et al. (2015)](https://doi.org/10.1002/2014GB004986), which is available [here](https://github.com/MathisHain/MyAMI). The key differences between the original model and this package are:
