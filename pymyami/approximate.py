@@ -59,7 +59,7 @@ def approximate_seawater_correction(TempC=25, Sal=35, Mg=0.0528171, Ca=0.0102821
     X_ = poly.fit_transform(X)
     
     # calculate and return seawater correction
-    return {k: X_.dot(c).reshape(in_shape) for k, c in SEAWATER_CORRECTION_COEFS.items()}
+    return {k: X_.dot(c).reshape(in_shape) for k, c in SEAWATER_CORRECTION_COEFS.items() if k != '_equation'}
 
 
 def check_limits(TempC, Sal, Mg, Ca):
@@ -127,10 +127,19 @@ def generate_approximate_seawater_correction_params(n=29, fit_reports=True):
         gMg.ravel(),
         gCa.ravel()
     ]).T
-    
+
+    X_names = [
+        'TempK',
+        'ln(TempK)',
+        'Sal',
+        'Mg',
+        'Ca'
+    ]
+
     poly = PolynomialFeatures(degree=3)
     X_ = poly.fit_transform(X)
-    
+    eqn = poly.get_feature_names_out(X_names)
+
     # calculate best-fit parameters
     coefs = {}
     for k in flat_seawater_correction:
@@ -146,7 +155,9 @@ def generate_approximate_seawater_correction_params(n=29, fit_reports=True):
             fig.savefig(fname, dpi=150)
 
     with open(MyAMI_parameter_file('seawater_correction_approximated.json'), 'w') as f:
-        json.dump({k: list(v) for k, v in coefs.items()}, f)
+        output = {k: list(v) for k, v in coefs.items()}
+        output['_equation'] = ' + '.join(eqn)
+        json.dump(output, f)
 
 
 def seawater_correction_fit_report(k, obs, pred, X):

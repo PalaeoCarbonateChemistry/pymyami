@@ -123,9 +123,14 @@ TABLES = {}
 fs = glob(str(MyAMI_parameter_file('Tab*.csv')))
 for f in fs:
     fname = os.path.split(f)[-1].replace('.csv', '')
-    TABLES[fname] = pd.read_csv(f, comment='#')
-    TABLES[fname].fillna(0, inplace=True)
-
+    df = pd.read_csv(f, comment='#')
+    for col in df.columns:
+        # fill missing values in numeric columns with 0
+        converted = pd.to_numeric(df[col], errors='coerce')
+        if not converted.isna().all():
+            df[col] = converted.fillna(0)
+    TABLES[fname] = df
+    
 # remove unused pairs
 TABA11 = filter_terms(TABLES['TabA11'], ION_IND)
 TABA10 = filter_terms(TABLES['TabA10'], ION_IND)

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="33.55806mm"
+   height="12.517766mm"
+   viewBox="0 0 33.55806 12.517766"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.4.2 (ebf0e940d0, 2025-05-08)"
+   sodipodi:docname="pymyami.svg"
+   inkscape:export-filename="pymyami.png"
+   inkscape:export-xdpi="200"
+   inkscape:export-ydpi="200"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#eeeeee"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#505050"
+     inkscape:document-units="mm"
+     inkscape:zoom="3.8294744"
+     inkscape:cx="64.23858"
+     inkscape:cy="5.353215"
+     inkscape:window-width="1590"
+     inkscape:window-height="962"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1">
+    <linearGradient
+       id="linearGradient1"
+       inkscape:collect="always">
+      <stop
+         style="stop-color:#f0ce41;stop-opacity:1;"
+         offset="0"
+         id="stop1" />
+      <stop
+         style="stop-color:#991ba5;stop-opacity:0.96862745;"
+         offset="1"
+         id="stop2" />
+    </linearGradient>
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient1"
+       id="linearGradient2"
+       x1="63.300343"
+       y1="97.78949"
+       x2="63.300343"
+       y2="106.91389"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(-0.52916667)" />
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-60.05404,-94.563924)">
+    <g
+       id="g3-7"
+       transform="matrix(0.76807387,0,0,0.76807387,22.911334,23.088147)"
+       style="opacity:1">
+      <circle
+         style="opacity:1;fill:#ffcad4;fill-opacity:0.99607843;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         id="path2-9"
+         cx="83.228233"
+         cy="95.548187"
+         r="2.3897197" />
+      <g
+         id="g2-2"
+         transform="matrix(0.7353017,0,0,0.7353017,29.0052,25.769171)">
+        <text
+           xml:space="preserve"
+           style="font-size:2.11667px;line-height:1.3;font-family:Poppins;-inkscape-font-specification:Poppins;text-align:start;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#046a38;stroke-width:0.7"
+           x="71.358345"
+           y="95.818596"
+           id="text1-2-0"><tspan
+             sodipodi:role="line"
+             id="tspan1-7-2"
+             style="font-weight:normal;font-size:2.11667px;fill:#040000;fill-opacity:1;stroke-width:0.7"
+             x="71.358345"
+             y="95.818596">Ca<tspan
+   style="font-size:65%;baseline-shift:super"
+   id="tspan2-3">2+</tspan></tspan></text>
+      </g>
+    </g>
+    <g
+       id="g3"
+       transform="matrix(0.76807387,0,0,0.76807387,25.817843,24.332651)"
+       style="opacity:1">
+      <circle
+         style="opacity:1;fill:#a2e8dd;fill-opacity:0.99607843;stroke:#000000;stroke-width:0.2;stroke-dasharray:none;stroke-opacity:1"
+         id="path2"
+         cx="83.228233"
+         cy="95.548187"
+         r="2.3897197" />
+      <g
+         id="g2"
+         transform="matrix(0.7353017,0,0,0.7353017,29.0052,25.769171)">
+        <text
+           xml:space="preserve"
+           style="font-size:2.11667px;line-height:1.3;font-family:Poppins;-inkscape-font-specification:Poppins;text-align:start;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#046a38;stroke-width:0.7"
+           x="71.228172"
+           y="95.542374"
+           id="text1-2"><tspan
+             sodipodi:role="line"
+             id="tspan1-7"
+             style="font-weight:normal;font-size:2.11667px;fill:#040000;fill-opacity:1;stroke-width:0.7"
+             x="71.228172"
+             y="95.542374">Mg<tspan
+   style="font-size:65%;baseline-shift:super"
+   id="tspan2">2+</tspan></tspan></text>
+      </g>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-size:8.46667px;line-height:1.3;font-family:Poppins;-inkscape-font-specification:Poppins;text-align:start;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:url(#linearGradient2);stroke-width:0.7"
+       x="62.471676"
+       y="104.83803"
+       id="text1-3"><tspan
+         sodipodi:role="line"
+         id="tspan1-5"
+         style="font-weight:bold;fill:url(#linearGradient2);fill-opacity:1;stroke-width:0.7"
+         x="62.471676"
+         y="104.83803">myami</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.23333px;line-height:1.3;font-family:Poppins;-inkscape-font-specification:Poppins;text-align:start;word-spacing:0px;writing-mode:lr-tb;direction:ltr;text-anchor:start;opacity:1;fill:#f4acb7;fill-opacity:0.968627;stroke:#000000;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1"
+       x="59.912216"
+       y="105.82016"
+       id="text1"><tspan
+         sodipodi:role="line"
+         id="tspan1"
+         style="font-weight:bold;font-size:4.23333px;fill:#f4acb7;fill-opacity:0.968627;stroke:#000000;stroke-width:0.1;stroke-dasharray:none;stroke-opacity:1"
+         x="59.912216"
+         y="105.82016">py</tspan></text>
+  </g>
+</svg>
