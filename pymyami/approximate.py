@@ -59,7 +59,7 @@ def approximate_seawater_correction(TempC=25, Sal=35, Mg=0.0528171, Ca=0.0102821
     X_ = poly.fit_transform(X)
     
     # calculate and return seawater correction
-    return {k: X_.dot(c).reshape(in_shape) for k, c in SEAWATER_CORRECTION_COEFS.items()}
+    return {k: X_.dot(c).reshape(in_shape) for k, c in SEAWATER_CORRECTION_COEFS.items() if k != '_equation'}
 
 
 def check_limits(TempC, Sal, Mg, Ca):
